@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Wordnet library on node.js",
   "scripts": {
-    "test": "node_modules/.bin/coffee test/test.coffee"
+    "test": "./run-test.sh"
   },
   "repository": "https://github.com/ksato9700/wordnet.js.git",
   "author": "Ken Sato <ksato9700@gmail.com>",
