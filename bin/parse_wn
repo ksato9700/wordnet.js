@@ -3,19 +3,24 @@
 # vim:ft=coffee ts=2 sw=2 et :
 
 fs = require 'fs'
+events = require 'events'
+
 wordnet = require '../src/wordnet'
 
+emitter = new events.EventEmitter()
+parserStream = new wordnet.ParserStream emitter, true
+
 fs.createReadStream(process.argv[2])
-.pipe wordnet.parserStream
+.pipe parserStream
 
-wordnet.emitter.on "Lexicon", (data)->
+emitter.on "Lexicon", (data)->
   console.log data.id
 
-wordnet.emitter.on "LexicalEntry", (data)->
+emitter.on "LexicalEntry", (data)->
   console.log data.id
 
-wordnet.emitter.on "Synset", (data)->
+emitter.on "Synset", (data)->
   console.log data.id
 
-wordnet.emitter.on "SenseAxis", (data)->
+emitter.on "SenseAxis", (data)->
   console.log data.id
