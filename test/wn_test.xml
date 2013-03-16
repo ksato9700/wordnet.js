@@ -24,5 +24,46 @@
       <Lemma writtenForm='動詞２' partOfSpeech='v'/>
       <Sense id='w00003_s00008' synset='s00008'/>
    </LexicalEntry>
+   <Synset id='s00000' baseConcept='1'>
+	 <Definition gloss="定義１">
+       <Statement example="例１"/>
+       <Statement example="例２"/>
+       <Statement example="例３"/>
+	 </Definition>
+     <SynsetRelations>
+         <SynsetRelation targets='s00001' relType='sim'/>
+      </SynsetRelations>
+   </Synset>
+   <Synset id='s00001' baseConcept='2'>
+    <Definition gloss="定義２">
+      <Statement example="例４"/>
+      <Statement example="例５"/>
+    </Definition>
+      <SynsetRelations>
+         <SynsetRelation targets='s00002' relType='mmem'/>
+         <SynsetRelation targets='s00003' relType='hype'/>
+         <SynsetRelation targets='s00004' relType='mmem'/>
+      </SynsetRelations>
+   </Synset>
+   <Synset id='s10000' baseConcept='3'>
+	 <SynsetRelations>
+       <SynsetRelation targets='s10000' relType='self'></SynsetRelation>
+     </SynsetRelations>
+	 <MonolingualExternalRefs>
+       <MonolingualExternalRef externalSystem='abc' externalReference='xyz' relType='at'/>
+       <MonolingualExternalRef externalSystem='efg' externalReference='xyz' relType='at'/>
+     </MonolingualExternalRefs>
+   </Synset>
 </Lexicon>
+
+<SenseAxes>
+  <SenseAxis id='sa00000' relType='eq_synonym'>
+    <Target ID='s00000'/>
+    <Target ID='s00001'/>
+  </SenseAxis>
+  <SenseAxis id='sa00001' relType='eq_synonym'>
+    <Target ID='s00002'/>
+    <Target ID='s00003'/>
+  </SenseAxis>
+</SenseAxes>
 </LexicalResource>

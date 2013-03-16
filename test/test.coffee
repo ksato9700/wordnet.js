@@ -36,6 +36,56 @@ entries =
       {id: 'w00003_s00008', synset: 's00008'}
     ]
 
+synsets =
+  s00000:
+    baseConcept: '1'
+    relations: [
+      {targets: 's00001', relType: 'sim'}
+    ]
+    definition:
+      gloss: '定義１'
+      statements: [
+        {example: '例１' },
+        {example: '例２' },
+        {example: '例３' }
+      ]
+  s00001:
+    baseConcept: '2',
+    relations: [
+      {targets: 's00002', relType: 'mmem'},
+      {targets: 's00003', relType: 'hype'},
+      {targets: 's00004', relType: 'mmem'}
+    ]
+    definition:
+      gloss: '定義２',
+      statements: [
+        {example: '例４'}
+        {example: '例５'}
+      ]
+  s10000:
+    baseConcept: '3',
+    monoExtRefs: [
+      {externalSystem: 'abc', externalReference: 'xyz', relType: 'at'},
+      {externalSystem: 'efg', externalReference: 'xyz', relType: 'at'},
+    ]
+    relations: [
+      {targets: 's10000', relType: 'self'},
+    ]
+
+saxes =
+  sa00000:
+    relType: 'eq_synonym'
+    targets: [
+      {ID: 's00000'}
+      {ID: 's00001'}
+    ]
+  sa00001:
+    relType: 'eq_synonym'
+    targets: [
+      {ID: 's00002'}
+      {ID: 's00003'}
+    ]
+
 lexicon =
   languageCoding: 'ISO 639-3'
   label: 'Lexicon Label'
@@ -47,11 +97,20 @@ fs.createReadStream("test/wn_test.xml")
 .pipe wordnet.parserStream
 
 wordnet.emitter.on "Lexicon", (data)->
-  for k, v of lexicon
-    assert.equal data[k], v
+  assert.deepEqual data, lexicon
 
 wordnet.emitter.on "LexicalEntry", (data)->
-  assert entries[data.id], "id=#{data.id} is not expected"
-  for k,v of entries[data.id]
-    assert.deepEqual data[k], v
+  exp = entries[data.id]
+  delete data.id
+  assert.deepEqual data, exp
+
+wordnet.emitter.on "Synset", (data)->
+  exp = synsets[data.id]
+  delete data.id
+  assert.deepEqual data, exp
+
+wordnet.emitter.on "SenseAxis", (data)->
+  exp = saxes[data.id]
+  delete data.id
+  assert.deepEqual data, exp
 

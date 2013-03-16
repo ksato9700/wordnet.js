@@ -1,0 +1,21 @@
+#!/usr/bin/env coffee
+# -*- mode: Coffee -*-
+# vim:ft=coffee ts=2 sw=2 et :
+
+fs = require 'fs'
+wordnet = require '../src/wordnet'
+
+fs.createReadStream(process.argv[2])
+.pipe wordnet.parserStream
+
+wordnet.emitter.on "Lexicon", (data)->
+  console.log data.id
+
+wordnet.emitter.on "LexicalEntry", (data)->
+  console.log data.id
+
+wordnet.emitter.on "Synset", (data)->
+  console.log data.id
+
+wordnet.emitter.on "SenseAxis", (data)->
+  console.log data.id
