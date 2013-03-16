@@ -1,0 +1,10 @@
+LexicalEntry w00000
+LexicalEntry w00001
+LexicalEntry w00002
+LexicalEntry w00003
+Synset s00000
+Synset s00001
+Synset s10000
+ISO 639-3 Lexicon Label jpn ksato9700 1.0
+SenseAxis sa00000
+SenseAxis sa00001

@@ -13,14 +13,9 @@ parserStream = new wordnet.ParserStream emitter, true
 fs.createReadStream(process.argv[2])
 .pipe parserStream
 
-emitter.on "Lexicon", (data)->
-  console.log data.id
+for tag in ["LexicalEntry", "Synset", "SenseAxis"]
+  emitter.on tag, (tag, data)->
+    console.log tag, data.id
 
-emitter.on "LexicalEntry", (data)->
-  console.log data.id
-
-emitter.on "Synset", (data)->
-  console.log data.id
-
-emitter.on "SenseAxis", (data)->
-  console.log data.id
+emitter.on "Lexicon", (tag, data)->
+  console.log data.languageCoding, data.label, data.language, data.owner, data.version

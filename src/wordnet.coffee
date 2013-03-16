@@ -43,9 +43,9 @@ class ParserStream extends sax.SAXStream
       attributes = @attr_stack.pop()
       switch name
         when "Lexicon"
-          @outdb.emit "Lexicon", attributes
+          @emit_event "Lexicon", attributes
         when "LexicalEntry"
-          @outdb.emit "LexicalEntry", @entry
+          @emit_event "LexicalEntry", @entry
           @entry = null
         when "Lemma"
           @entry.lemma = attributes
@@ -53,7 +53,7 @@ class ParserStream extends sax.SAXStream
           @entry.senses.push attributes
 
         when "Synset"
-          @outdb.emit "Synset", @synset
+          @emit_event "Synset", @synset
           @synset = null
 
         when "Definition"
@@ -68,7 +68,7 @@ class ParserStream extends sax.SAXStream
           @synset.monoExtRefs.push attributes
 
         when "SenseAxis"
-          @outdb.emit "SenseAxis", @saxis
+          @emit_event "SenseAxis", @saxis
           @saxis = null
         when "Target"
           @saxis.targets.push attributes
@@ -77,5 +77,8 @@ class ParserStream extends sax.SAXStream
           # do nothing
         else
           throw name
+
+  emit_event: (tag, value)->
+    @outdb.emit tag, tag, value
 
 exports.ParserStream = ParserStream
