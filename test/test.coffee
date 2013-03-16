@@ -4,6 +4,7 @@
 wordnet = require '../src/wordnet'
 fs = require 'fs'
 assert = require 'assert'
+events = require 'events'
 
 #
 # expected value
@@ -93,23 +94,27 @@ lexicon =
   owner: 'ksato9700'
   version: '1.0'
 
-fs.createReadStream("test/wn_test.xml")
-.pipe wordnet.parserStream
 
-wordnet.emitter.on "Lexicon", (data)->
+emitter = new events.EventEmitter()
+parserStream = new wordnet.ParserStream emitter, true
+
+fs.createReadStream("test/wn_test.xml")
+.pipe parserStream
+
+emitter.on "Lexicon", (data)->
   assert.deepEqual data, lexicon
 
-wordnet.emitter.on "LexicalEntry", (data)->
+emitter.on "LexicalEntry", (data)->
   exp = entries[data.id]
   delete data.id
   assert.deepEqual data, exp
 
-wordnet.emitter.on "Synset", (data)->
+emitter.on "Synset", (data)->
   exp = synsets[data.id]
   delete data.id
   assert.deepEqual data, exp
 
-wordnet.emitter.on "SenseAxis", (data)->
+emitter.on "SenseAxis", (data)->
   exp = saxes[data.id]
   delete data.id
   assert.deepEqual data, exp
