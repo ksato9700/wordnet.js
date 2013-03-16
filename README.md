@@ -11,4 +11,9 @@ A library for parsing and processing Wordnet DB
     var wordnet = require("wordnet");
     wordnet.parse("jpn_wn_lmf.xml");
 
+## Test
+
+    npm test
+
+
 
