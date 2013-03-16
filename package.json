@@ -1,0 +1,17 @@
+{
+  "name": "wordnet.js",
+  "version": "0.0.1",
+  "description": "Wordnet library on node.js",
+  "scripts": {
+    "test": "node_modules/.bin/coffee test/test.coffee"
+  },
+  "repository": "https://github.com/ksato9700/wordnet.js.git",
+  "author": "Ken Sato <ksato9700@gmail.com>",
+  "license": "BSD",
+  "dependencies": {
+    "sax": "~0.5.2"
+  },
+  "devDependencies": {
+    "coffee-script": "~1.6.1"
+  }
+}
