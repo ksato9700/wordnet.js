@@ -3,7 +3,16 @@
 # tests in coffee
 #
 node_modules/.bin/coffee test/test.coffee
+if [ $? -ne 0 ]
+then
+exit 1
+fi
+
 node_modules/.bin/coffee test/test_riak.coffee
+if [ $? -ne 0 ]
+then
+exit 1
+fi
 
 #
 # tests of commands
