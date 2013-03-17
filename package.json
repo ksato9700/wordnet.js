@@ -9,9 +9,11 @@
   "author": "Ken Sato <ksato9700@gmail.com>",
   "license": "BSD",
   "dependencies": {
-    "sax": "~0.5.2"
+    "sax": "~0.5.2",
+    "riak-js": "~0.9.4pre3"
   },
   "devDependencies": {
-    "coffee-script": "~1.6.1"
+    "coffee-script": "~1.6.1",
+    "async": "~0.2.6"
   }
 }

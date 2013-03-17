@@ -7,15 +7,20 @@ events = require 'events'
 
 wordnet = require '../src/wordnet'
 
-emitter = new events.EventEmitter()
-parserStream = new wordnet.ParserStream emitter, true
+class DbPlugin_Sample extends events.EventEmitter
+  constructor: ->
+    super()
+    @pause = false
+
+  store_info: (data)->
+    console.log data.languageCoding, data.label, data.language, data.owner, data.version
+  
+  store_entry: (data)->
+    console.log data.id
+
+dbplugin_sample = new DbPlugin_Sample()
+parserStream = new wordnet.ParserStream dbplugin_sample, true
 
 fs.createReadStream(process.argv[2])
 .pipe parserStream
-
-for tag in ["LexicalEntry", "Synset", "SenseAxis"]
-  emitter.on tag, (tag, data)->
-    console.log tag, data.id
-
-emitter.on "Lexicon", (tag, data)->
-  console.log data.languageCoding, data.label, data.language, data.owner, data.version
+  

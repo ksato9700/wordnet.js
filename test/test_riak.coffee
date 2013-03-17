@@ -1,14 +1,35 @@
 #
 # Copyright 2013 Kenichi Sato
 #
-wordnet = require '../src/wordnet'
+ParserStream = require('../src/wordnet').ParserStream
+DbPlugin_Riak = require('../src/dbplugin_riak').DbPlugin_Riak
+
 fs = require 'fs'
 assert = require 'assert'
-events = require 'events'
+async = require 'async'
+
+dbplugin_riak = new DbPlugin_Riak()
+parserStream = new ParserStream dbplugin_riak, true
 
 #
-# expected value
-# 
+# expected values
+#
+KEYS = [
+  'label' 
+  'language',
+  'languageCoding',
+  'owner',
+  's00000',
+  's00001',
+  's10000',
+  'sa00000',
+  'sa00001',
+  'version',
+  'w00000',
+  'w00001',
+  'w00002',
+  'w00003'
+]
 
 exp =
   w00000:
@@ -94,26 +115,54 @@ exp =
       {ID: 's00003'}
     ]
 
-info =
   languageCoding: 'ISO 639-3'
   label: 'Lexicon Label'
   language: 'jpn'
   owner: 'ksato9700'
   version: '0.1-test'
 
-class DbPlugin_Sample extends events.EventEmitter
-  constructor: ->
-    super()
-    @pause = false
-
-  store_info: (data)->
-    assert.deepEqual data, info
-
-  store_entry: (data)->
-    assert.deepEqual data, exp[data.id]
-
-dbplugin_sample = new DbPlugin_Sample()
-parserStream = new wordnet.ParserStream dbplugin_sample, true
-
+#
+# read from a file and store it to Riak DB
+#
 fs.createReadStream("test/wn_test.xml")
-.pipe parserStream
+.pipe(parserStream).on 'end', ->
+
+  #
+  # verify the result
+  #
+  db = require('riak-js').getClient()
+  buckets = 'wordnet-jpn-0.1-test'
+
+  async.parallel [
+    # keys
+    (callback)->
+      keys = []
+      keys_event = db.keys buckets
+      keys_event.on 'keys', (keylist)->
+       keys = keys.concat keylist
+      keys_event.on 'end', (keylist)->
+        keys.sort()
+        assert.deepEqual keys, KEYS
+        callback null
+      keys_event.start()
+    ,
+    # number of entries
+    (callback)->
+      db.count buckets, (err, count)->
+        assert.equal err, null
+        assert.equal count, KEYS.length
+        callback null
+    ,
+    # compare values
+    (callback)->
+      async.each KEYS, (key, cb)->
+        db.get buckets, key, (err, data)->
+          assert.equal err, null
+          assert.deepEqual data, exp[key]
+          cb null
+      , (err)->
+          callback err
+    ]
+
+
+

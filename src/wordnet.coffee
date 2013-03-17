@@ -18,7 +18,7 @@ class ParserStream extends sax.SAXStream
       @attr_stack.unshift node.attributes
       switch node.name
         when "Lexicon"
-          @emit_event "Lexicon", node.attributes
+          @outdb.store_info node.attributes
         when "LexicalEntry"
           @entry_stack.unshift
             id: node.attributes.id
@@ -41,15 +41,10 @@ class ParserStream extends sax.SAXStream
     @on "closetag", (name)->
       attributes = @attr_stack.shift()
       switch name
-        when "LexicalEntry"
-          @emit_event "LexicalEntry", @entry_stack.shift()
         when "Lemma"
           @entry_stack[0].lemma = attributes
         when "Sense"
           @entry_stack[0].senses.push attributes
-
-        when "Synset"
-          @emit_event "Synset", @entry_stack.shift()
 
         when "Definition"
           definition = @entry_stack.shift()
@@ -62,17 +57,22 @@ class ParserStream extends sax.SAXStream
           @entry_stack[0].monoExtRefs ||= []
           @entry_stack[0].monoExtRefs.push attributes
 
-        when "SenseAxis"
-          @emit_event "SenseAxis", @entry_stack.shift()
         when "Target"
           @entry_stack[0].targets.push attributes
+
+        when "LexicalEntry", "Synset", "SenseAxis"
+          @outdb.store_entry @entry_stack.shift()
 
         when "LexicalResource", "GlobalInformation", "SynsetRelations", "MonolingualExternalRefs", "SenseAxes", "Lexicon"
           # do nothing
         else
           throw name
 
-  emit_event: (tag, value)->
-    @outdb.emit tag, tag, value
+    @outdb.on 'resume', =>
+      @emit 'drain'
+
+  write: (chunk, encoding, callback)->
+    super(chunk, encoding, callback)
+    return not @outdb.pause
 
 exports.ParserStream = ParserStream

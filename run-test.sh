@@ -3,6 +3,7 @@
 # tests in coffee
 #
 node_modules/.bin/coffee test/test.coffee
+node_modules/.bin/coffee test/test_riak.coffee
 
 #
 # tests of commands

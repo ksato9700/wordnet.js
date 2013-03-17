@@ -1,10 +1,10 @@
 ISO 639-3 Lexicon Label jpn ksato9700 0.1-test
-LexicalEntry w00000
-LexicalEntry w00001
-LexicalEntry w00002
-LexicalEntry w00003
-Synset s00000
-Synset s00001
-Synset s10000
-SenseAxis sa00000
-SenseAxis sa00001
+w00000
+w00001
+w00002
+w00003
+s00000
+s00001
+s10000
+sa00000
+sa00001
