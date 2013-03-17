@@ -102,7 +102,7 @@ lexicon =
   label: 'Lexicon Label'
   language: 'jpn'
   owner: 'ksato9700'
-  version: '1.0'
+  version: '0.1-test'
 
 
 emitter = new events.EventEmitter()

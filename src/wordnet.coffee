@@ -9,69 +9,63 @@ class ParserStream extends sax.SAXStream
     super strict, opt
 
     @attr_stack = []
-    @entry = null
-    @synset = null
-    @definition = null
-    @saxis = null
+    @entry_stack = []
 
     @on "error", (e)->
       console.log "error: #{e}"
 
     @on "opentag", (node)->
-      @attr_stack.push node.attributes
+      @attr_stack.unshift node.attributes
       switch node.name
         when "Lexicon"
           @emit_event "Lexicon", node.attributes
         when "LexicalEntry"
-          @entry =
+          @entry_stack.unshift
             id: node.attributes.id
             senses: []
         when "Synset"
-          @synset =
+          @entry_stack.unshift
             id: node.attributes.id
             baseConcept: node.attributes.baseConcept
             relations: []
         when "Definition"
-          @definition =
+          @entry_stack.unshift
             gloss: node.attributes.gloss
             statements: []
         when "SenseAxis"
-          @saxis =
+          @entry_stack.unshift
             id: node.attributes.id
             relType: node.attributes.relType
             targets: []
 
     @on "closetag", (name)->
-      attributes = @attr_stack.pop()
+      attributes = @attr_stack.shift()
       switch name
         when "LexicalEntry"
-          @emit_event "LexicalEntry", @entry
-          @entry = null
+          @emit_event "LexicalEntry", @entry_stack.shift()
         when "Lemma"
-          @entry.lemma = attributes
+          @entry_stack[0].lemma = attributes
         when "Sense"
-          @entry.senses.push attributes
+          @entry_stack[0].senses.push attributes
 
         when "Synset"
-          @emit_event "Synset", @synset
-          @synset = null
+          @emit_event "Synset", @entry_stack.shift()
 
         when "Definition"
-          @synset.definition = @definition
-          @definition = null
+          definition = @entry_stack.shift()
+          @entry_stack[0].definition = definition
         when "Statement"
-          @definition.statements.push attributes
+          @entry_stack[0].statements.push attributes
         when "SynsetRelation"
-          @synset.relations.push attributes
+          @entry_stack[0].relations.push attributes
         when "MonolingualExternalRef"
-          @synset.monoExtRefs ||= []
-          @synset.monoExtRefs.push attributes
+          @entry_stack[0].monoExtRefs ||= []
+          @entry_stack[0].monoExtRefs.push attributes
 
         when "SenseAxis"
-          @emit_event "SenseAxis", @saxis
-          @saxis = null
+          @emit_event "SenseAxis", @entry_stack.shift()
         when "Target"
-          @saxis.targets.push attributes
+          @entry_stack[0].targets.push attributes
 
         when "LexicalResource", "GlobalInformation", "SynsetRelations", "MonolingualExternalRefs", "SenseAxes", "Lexicon"
           # do nothing

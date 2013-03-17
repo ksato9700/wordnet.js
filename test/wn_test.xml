@@ -2,7 +2,7 @@
 <!DOCTYPE LexicalResource SYSTEM "WN-LMF.dtd">
 <LexicalResource>
 	<GlobalInformation label="Global Information Label"/>
-<Lexicon languageCoding='ISO 639-3' label='Lexicon Label' language='jpn' owner='ksato9700' version='1.0'>
+<Lexicon languageCoding='ISO 639-3' label='Lexicon Label' language='jpn' owner='ksato9700' version='0.1-test'>
    <LexicalEntry id ='w00000'>
       <Lemma writtenForm='名詞１' partOfSpeech='n'/>
       <Sense id='w00000_s00000' synset='s00000'/>

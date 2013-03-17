@@ -1,4 +1,4 @@
-ISO 639-3 Lexicon Label jpn ksato9700 1.0
+ISO 639-3 Lexicon Label jpn ksato9700 0.1-test
 LexicalEntry w00000
 LexicalEntry w00001
 LexicalEntry w00002
