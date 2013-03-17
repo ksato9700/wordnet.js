@@ -121,48 +121,66 @@ exp =
   owner: 'ksato9700'
   version: '0.1-test'
 
-#
-# read from a file and store it to Riak DB
-#
-fs.createReadStream("test/wn_test.xml")
-.pipe(parserStream).on 'end', ->
+db = require('riak-js').getClient()
+buckets = 'wordnet-jpn-0.1-test'
+
+
+async.series [
+  #
+  # remove the data first
+  #
+  (callback)->
+    async.each KEYS, (key, cb)->
+      db.remove buckets, key, (err, data)->
+        if not err or err.statusCode == 404
+          cb null
+        else
+          cb err
+    , (err)->
+      callback err
+  ,
+  #
+  # read from a file and store it to Riak DB
+  #
+  (callback)->
+    s = fs.createReadStream("test/wn_test.xml").pipe parserStream
+    s.on 'done', ->
+      callback null
+  ,
 
   #
   # verify the result
   #
-  db = require('riak-js').getClient()
-  buckets = 'wordnet-jpn-0.1-test'
 
-  async.parallel [
-    # keys
-    (callback)->
-      keys = []
-      keys_event = db.keys buckets
-      keys_event.on 'keys', (keylist)->
-       keys = keys.concat keylist
-      keys_event.on 'end', (keylist)->
-        keys.sort()
-        assert.deepEqual keys, KEYS
-        callback null
-      keys_event.start()
-    ,
-    # number of entries
-    (callback)->
-      db.count buckets, (err, count)->
+  # keys
+  (callback)->
+    keys = []
+    keys_event = db.keys buckets
+    keys_event.on 'keys', (keylist)->
+     keys = keys.concat keylist
+    keys_event.on 'end', (keylist)->
+      keys.sort()
+      assert.deepEqual keys, KEYS
+      callback null
+    keys_event.start()
+  ,
+  # number of entries
+  (callback)->
+    db.count buckets, (err, count)->
+      assert.equal err, null
+      assert.equal count, KEYS.length
+      callback null
+  ,
+  # compare values
+  (callback)->
+    async.each KEYS, (key, cb)->
+      db.get buckets, key, (err, data)->
         assert.equal err, null
-        assert.equal count, KEYS.length
-        callback null
-    ,
-    # compare values
-    (callback)->
-      async.each KEYS, (key, cb)->
-        db.get buckets, key, (err, data)->
-          assert.equal err, null
-          assert.deepEqual data, exp[key]
-          cb null
-      , (err)->
-          callback err
-    ]
+        assert.deepEqual data, exp[key]
+        cb null
+    , (err)->
+        callback err
+  ]
 
 
 

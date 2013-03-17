@@ -68,6 +68,9 @@ class ParserStream extends sax.SAXStream
         else
           throw name
 
+    @outdb.on 'done', =>
+      @emit 'done'
+
     @outdb.on 'resume', =>
       @emit 'drain'
 

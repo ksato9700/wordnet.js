@@ -24,9 +24,11 @@ class DbPlugin_Riak extends events.EventEmitter
         @pending_count -= 1
         #console.log 'finish', event.path
         #console.log @pending_count
-        if @pause and @pending_count < 10
+        if @pause and @pending_count < 100
           @pause = false
-          @emit 'resume'           
+          @emit 'resume'
+        if @pending_count == 0
+          @emit 'done'
 
     @db.registerListener instrument
 
