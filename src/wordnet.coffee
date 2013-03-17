@@ -20,6 +20,8 @@ class ParserStream extends sax.SAXStream
     @on "opentag", (node)->
       @attr_stack.push node.attributes
       switch node.name
+        when "Lexicon"
+          @emit_event "Lexicon", node.attributes
         when "LexicalEntry"
           @entry =
             id: node.attributes.id
@@ -42,8 +44,6 @@ class ParserStream extends sax.SAXStream
     @on "closetag", (name)->
       attributes = @attr_stack.pop()
       switch name
-        when "Lexicon"
-          @emit_event "Lexicon", attributes
         when "LexicalEntry"
           @emit_event "LexicalEntry", @entry
           @entry = null
@@ -73,7 +73,7 @@ class ParserStream extends sax.SAXStream
         when "Target"
           @saxis.targets.push attributes
 
-        when "LexicalResource", "GlobalInformation", "SynsetRelations", "MonolingualExternalRefs", "SenseAxes"
+        when "LexicalResource", "GlobalInformation", "SynsetRelations", "MonolingualExternalRefs", "SenseAxes", "Lexicon"
           # do nothing
         else
           throw name
