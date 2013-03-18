@@ -10,7 +10,7 @@
   "license": "BSD",
   "dependencies": {
     "sax": "~0.5.2",
-    "riak-js": "~0.9.4pre3"
+    "riak-js": "~0.9.3"
   },
   "devDependencies": {
     "coffee-script": "~1.6.1",
