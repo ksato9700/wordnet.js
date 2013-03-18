@@ -180,7 +180,5 @@ async.series [
         cb null
     , (err)->
         callback err
-  ]
-
-
-
+  ], (err, results)->
+    assert.equal err, null
