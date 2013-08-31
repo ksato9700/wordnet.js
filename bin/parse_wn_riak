@@ -1,0 +1,14 @@
+#!/usr/bin/env coffee
+# -*- mode: Coffee -*-
+# vim:ft=coffee ts=2 sw=2 et :
+
+fs = require 'fs'
+
+wordnet = require '../src/wordnet'
+dbplugin_riak = require '../src/dbplugin_riak'
+
+plugin = new dbplugin_riak.DbPlugin_Riak()
+parserStream = new wordnet.ParserStream plugin, true
+
+fs.createReadStream(process.argv[2])
+.pipe parserStream
